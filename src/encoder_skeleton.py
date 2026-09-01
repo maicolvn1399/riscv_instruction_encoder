@@ -17,10 +17,46 @@ import sys
 SOPORTADAS = ["add", "sub", "and", "or", "addi", "andi",
               "lw", "lb", "sw", "sb", "beq", "bne"]
 
+INSTRUCTIONS = {
+
+    "add": {"inst_type": "R", "opcode": 0b0110011, "funct3": 0b000, "funct7": 0b0000000},
+    "sub": {"inst_type": "R", "opcode": 0b0110011, "funct3": 0b000, "funct7": 0b0100000},
+    "and": {"inst_type": "R", "opcode": 0b0110011, "funct3": 0b111, "funct7": 0b0000000},
+    "or":  {"inst_type": "R", "opcode": 0b0110011, "funct3": 0b110, "funct7": 0b0000000},
+    "addi": {"inst_type": "I", "opcode": 0b0010011, "funct3": 0b000},
+    "andi": {"inst_type": "I", "opcode": 0b0010011, "funct3": 0b111},
+    "lw": {"inst_type": "IL", "opcode": 0b0000011, "funct3": 0b010},
+    "lb": {"inst_type": "IL", "opcode": 0b0000011, "funct3": 0b000},
+    "sw": {"inst_type": "S", "opcode": 0b0100011, "funct3": 0b010},
+    "sb": {"inst_type": "S", "opcode": 0b0100011, "funct3": 0b000},
+    "beq": {"inst_type": "B", "opcode": 0b1100011, "funct3": 0b000},
+    "bne": {"inst_type": "B", "opcode": 0b1100011, "funct3": 0b001}
+
+
+}
+
+def parse_register(reg: str) -> int:
+
+    if not reg:
+        raise ValueError("Registro vacío")
+    elif(reg[0] == "x"):
+        extracted_reg = reg[1:]
+        if (extracted_reg.isnumeric()):
+            extracted_reg = int(extracted_reg)
+        else: 
+            raise ValueError(f"Registro No valido: x{extracted_reg}")
+    else:
+        raise ValueError(f"Registro No valido:{reg}")
+
+    if (0 <= extracted_reg <= 31):
+        return extracted_reg
+    else:
+        raise ValueError(f"Registro fuera de rango: x{extracted_reg}")
 
 
 
-def parse(instruction: str):
+
+def parse_instruction(instruction: str):
     stripped = instruction.lower().strip()
     mnemonic,leftover = stripped.split(maxsplit=1)
 
@@ -32,6 +68,7 @@ def parse(instruction: str):
     
     
     print((mnemonic,operands))
+    return (mnemonic,operands)
 
     
     
@@ -75,7 +112,9 @@ def main():
 
     instruction = sys.argv[1]
     #word = encode_instruction(instruction) & 0xFFFFFFFF
-    word = parse(instruction)
+    word = parse_instruction(instruction)
+    for i in word[1]:
+        parse_register(i)
 
     #print(explain_instruction(instruction, word))
 
