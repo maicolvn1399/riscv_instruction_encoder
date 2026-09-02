@@ -31,8 +31,6 @@ INSTRUCTIONS = {
     "sb": {"inst_type": "S", "opcode": 0b0100011, "funct3": 0b000},
     "beq": {"inst_type": "B", "opcode": 0b1100011, "funct3": 0b000},
     "bne": {"inst_type": "B", "opcode": 0b1100011, "funct3": 0b001}
-
-
 }
 
 def parse_register(reg: str) -> int:
@@ -53,6 +51,9 @@ def parse_register(reg: str) -> int:
     else:
         raise ValueError(f"Registro fuera de rango: x{extracted_reg}")
 
+def get_imm(str_imm:str) -> int:
+    immediate = (int)(str_imm)
+    return immediate
 
 
 
@@ -70,9 +71,47 @@ def parse_instruction(instruction: str):
     print((mnemonic,operands))
     return (mnemonic,operands)
 
-    
-    
+def parse_imm(str_immediate:str) -> int: 
+    imm = int(str_immediate)
+    if not (-2048 <= imm <= 2047):
+        raise ValueError(f"Inmediato fuera de rango para tipo I: {imm} (debe estar entre -2048 y 2047)")
+    else:
+        return imm
 
+
+def encode_r_type_inst(mnemonic, operands) -> int:
+    regs = []
+    for i in operands: 
+        regs.append(parse_register(i))
+
+    opcode = INSTRUCTIONS[mnemonic]["opcode"]
+    funct3 = INSTRUCTIONS[mnemonic]["funct3"]
+    funct7 = INSTRUCTIONS[mnemonic]["funct7"]
+    rd = regs[0]
+    rs1 = regs[1]
+    rs2 = regs[2]
+
+    word = (funct7 << 25) | (rs2 << 20) | (rs1 << 15) | (funct3 << 12) | (rd << 7) | (opcode)
+    return word
+
+def encode_i_type_inst(mnemonic, operands) -> int: 
+    regs = []
+    for i in operands: 
+        if i[0] != "x":
+            regs.append(parse_imm(i))
+        else:
+            regs.append(parse_register(i))
+    
+    opcode = INSTRUCTIONS[mnemonic]["opcode"]
+    funct3 = INSTRUCTIONS[mnemonic]["funct3"]
+    rd = regs[0]
+    rs1 = regs[1]
+    imm = regs[2]
+    
+    word = (imm << 20) | (rs1 << 15) | (funct3 << 12) | (rd << 7) | (opcode)
+    return word
+
+    
 
 
 def encode_instruction(instruction: str) -> int:
@@ -88,7 +127,16 @@ def encode_instruction(instruction: str) -> int:
     # TODO: implementar. Sugerencia: parsear el mnemónico y los operandos,
     # despachar según el formato (R/I/S/B), y ensamblar los campos con
     # operaciones de bits.
-    raise NotImplementedError("encode_instruction: pendiente de implementar")
+    #raise NotImplementedError("encode_instruction: pendiente de implementar")
+
+    mnemonic, operands = parse_instruction(instruction)
+    tipo = INSTRUCTIONS[mnemonic]["inst_type"]
+    if tipo == "R":
+        return encode_r_type_inst(mnemonic, operands)
+    elif tipo == "I":
+        return encode_i_type_inst(mnemonic, operands)
+    else:
+        raise ValueError(f"Instrucción no soportada: {mnemonic}")
 
 
 def explain_instruction(instruction: str, word: int) -> str:
@@ -111,16 +159,14 @@ def main():
         sys.exit(2)
 
     instruction = sys.argv[1]
-    #word = encode_instruction(instruction) & 0xFFFFFFFF
-    word = parse_instruction(instruction)
-    for i in word[1]:
-        parse_register(i)
+    word = encode_instruction(instruction) & 0xFFFFFFFF
+    #word = parse_instruction(instruction)
 
     #print(explain_instruction(instruction, word))
 
     # No modificar el formato de la siguiente línea: la especificación la
     # requiere, literal, para permitir la validación automática.
-    #print(f"HEX: 0x{word:08x}")
+    print(f"HEX: 0x{word:08x}")
 
 
 if __name__ == "__main__":
