@@ -147,6 +147,29 @@ def encode_s_type_inst(mnemonic, operands) -> int:
     word = (imm_hi << 25) | (rs2 << 20) | (rs1 << 15) | (funct3 << 12) | (imm_lo << 7) | opcode
     return word
 
+def parse_imm_type_b(imm:str) -> int: 
+    imm_b = int(imm)
+    if imm_b % 2 != 0:
+        raise ValueError(f"El offset de branch debe ser par: {imm_b}")
+    if not (-4096 <= imm_b <= 4094):
+        raise ValueError(f"Offset fuera de rango para tipo B: {imm_b} (debe estar entre -4096 y 4094)")
+    return imm_b
+
+
+def encode_b_type_inst(mnemonic, operands) -> int:
+    rs1 = parse_register(operands[0])
+    rs2 = parse_register(operands[1])
+    imm = parse_imm_type_b(operands[2])
+    funct3 = INSTRUCTIONS[mnemonic]["funct3"]
+    opcode = INSTRUCTIONS[mnemonic]["opcode"]
+
+    imm = imm & 0x1FFF 
+
+    word = (((imm >> 12) & 0x1)  << 31) | (((imm >> 5)  & 0x3F) << 25) | (rs2 << 20) | (rs1 << 15) | (funct3 << 12) | (((imm >> 1)  & 0xF)  << 8)  | (((imm >> 11) & 0x1)  << 7)  | opcode
+    return word
+
+
+
 
     
 
@@ -176,6 +199,8 @@ def encode_instruction(instruction: str) -> int:
         return encode_il_type_inst(mnemonic,operands)
     elif tipo == "S":
         return encode_s_type_inst(mnemonic,operands)
+    elif tipo == "B":
+        return encode_b_type_inst(mnemonic,operands)
     else:
         raise ValueError(f"Instrucción no soportada: {mnemonic}")
 
