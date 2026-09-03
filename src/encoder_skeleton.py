@@ -78,6 +78,19 @@ def parse_imm(str_immediate:str) -> int:
     else:
         return imm
 
+def parse_memory(mem_offset:str) -> tuple:
+    reg_starts = mem_offset.find("(") + 1
+    reg_ends = mem_offset.rfind(")")
+
+    reg = mem_offset[reg_starts:reg_ends]
+    int_reg = parse_register(reg)
+    
+    offset = parse_imm(mem_offset[0:reg_starts-1])
+
+    #print((offset,int_reg))
+    return ((offset,int_reg))
+
+
 
 def encode_r_type_inst(mnemonic, operands) -> int:
     regs = []
@@ -111,6 +124,18 @@ def encode_i_type_inst(mnemonic, operands) -> int:
     word = (imm << 20) | (rs1 << 15) | (funct3 << 12) | (rd << 7) | (opcode)
     return word
 
+
+def encode_il_type_inst(mnemonic,operands) -> int: 
+    rd = parse_register(operands[0])
+    imm,rs1  = parse_memory(operands[1])
+    opcode = INSTRUCTIONS[mnemonic]["opcode"]
+    funct3 = INSTRUCTIONS[mnemonic]["funct3"]
+
+    word = (imm << 20 ) | (rs1 << 15) | (funct3 << 12) | (rd << 7) | opcode
+    return word
+
+
+
     
 
 
@@ -135,6 +160,8 @@ def encode_instruction(instruction: str) -> int:
         return encode_r_type_inst(mnemonic, operands)
     elif tipo == "I":
         return encode_i_type_inst(mnemonic, operands)
+    elif tipo == "IL":
+        return encode_il_type_inst(mnemonic,operands)
     else:
         raise ValueError(f"Instrucción no soportada: {mnemonic}")
 
