@@ -134,6 +134,18 @@ def encode_il_type_inst(mnemonic,operands) -> int:
     word = (imm << 20 ) | (rs1 << 15) | (funct3 << 12) | (rd << 7) | opcode
     return word
 
+def encode_s_type_inst(mnemonic, operands) -> int:
+    rs2 = parse_register(operands[0])
+    imm, rs1 = parse_memory(operands[1])
+    opcode = INSTRUCTIONS[mnemonic]["opcode"]
+    funct3 = INSTRUCTIONS[mnemonic]["funct3"]
+
+    imm = imm & 0xFFF                  
+    imm_hi = (imm >> 5) & 0x7F           
+    imm_lo = imm & 0x1F                  
+
+    word = (imm_hi << 25) | (rs2 << 20) | (rs1 << 15) | (funct3 << 12) | (imm_lo << 7) | opcode
+    return word
 
 
     
@@ -162,6 +174,8 @@ def encode_instruction(instruction: str) -> int:
         return encode_i_type_inst(mnemonic, operands)
     elif tipo == "IL":
         return encode_il_type_inst(mnemonic,operands)
+    elif tipo == "S":
+        return encode_s_type_inst(mnemonic,operands)
     else:
         raise ValueError(f"Instrucción no soportada: {mnemonic}")
 
