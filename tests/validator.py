@@ -21,18 +21,51 @@ OBJDUMP = TOOLCHAIN + "objdump"
 
 
 TEST_CASES = [
-    "add x5, x6, x7", "add x0, x1, x2", "add x31, x31, x31",
-    "sub x1, x2, x3", "sub x0, x5, x6", "sub x31, x0, x1",
-    "and x5, x6, x7", "and x0, x1, x2", "and x31, x30, x29",
-    "or x5, x6, x7", "or x0, x1, x2", "or x31, x30, x29",
-    "addi x10, x1, 100", "addi x10, x1, -12", "addi x1, x0, 2047",
-    "andi x5, x6, 15", "andi x5, x6, -1", "andi x1, x0, -2048",
-    "lw x5, 8(x6)", "lw x5, -8(x6)", "lw x10, 2047(x1)",
-    "lb x1, 4(x2)", "lb x1, -4(x2)", "lb x0, -2048(x0)",
-   "sw x8, 16(x2)", "sw x8, -4(x2)", "sw x0, 2047(x1)",
-   "sb x1, 100(x2)", "sb x1, -100(x2)", "sb x3, -2048(x4)",
-   "beq x1, x2, 8", "beq x5, x6, -4", "beq x0, x0, 0",
-   "bne x1, x2, 16", "bne x5, x6, -16", "bne x1, x2, 4094",
+    # R 
+    "add x5, x6, x7",       
+    "add x0, x1, x2",       
+    "add x31, x30, x29",   
+    "sub x1, x2, x3",
+    "sub x0, x5, x6",      
+    "sub x31, x30, x29",   
+    "and x5, x6, x7",
+    "and x0, x1, x2",       
+    "and x31, x30, x29",    
+    "or x5, x6, x7",
+    "or x0, x1, x2",        
+    "or x31, x30, x29",     
+
+    # I aritmético 
+    "addi x10, x1, 100",    
+    "addi x10, x1, -12",    
+    "addi x1, x0, 2047",    
+    "andi x5, x6, 15",      
+    "andi x5, x6, -1",      
+    "andi x1, x0, -2048",   
+
+    # I de carga 
+    "lw x5, 8(x6)",         
+    "lw x5, -8(x6)",        
+    "lw x10, 2047(x1)",     
+    "lb x1, 4(x2)",         
+    "lb x1, -4(x2)",        
+    "lb x0, -2048(x0)",     
+
+    # S 
+    "sw x8, 16(x2)",       
+    "sw x8, -4(x2)",        
+    "sw x0, 2047(x1)",      
+    "sb x1, 100(x2)",       
+    "sb x1, -100(x2)",      
+    "sb x3, -2048(x4)",     
+
+    # B 
+    "beq x1, x2, 8",       
+    "beq x5, x6, -4",       
+    "beq x0, x0, 0",        
+    "bne x1, x2, 4094",    
+    "bne x5, x6, -4096",    
+    "bne x1, x2, 16",       
 ]
 
 
