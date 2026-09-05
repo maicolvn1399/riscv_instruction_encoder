@@ -5,6 +5,7 @@ codificación binaria de 32 bits y en hexadecimal, mostrando de forma visual el 
 de cada campo del formato correspondiente (R, I, S o B).
 
 Proyecto Individual - CE-4301 Arquitectura de Computadores I (2026-IIS).
+
 Estudiante: Michael Valverde Navarro.
 
 ## Requisitos
