@@ -1,8 +1,8 @@
-# Documentación Técnica — Codificador Educativo de Instrucciones RISC-V
+# Documentación Técnica - Codificador Educativo de Instrucciones RISC-V
 
 **Curso:** CE-4301 Arquitectura de Computadores I
-**Proyecto Individual — 2026-II**
-**Autor:** Michael Valverde Navarro 
+**Proyecto Individual - 2026-IIS**
+**Estudiante:** Michael Valverde Navarro 
 
 ---
 
