@@ -10,7 +10,7 @@
 
 La herramienta traduce una única instrucción del subconjunto RV32I a su
 codificación de 32 bits y muestra un desglose visual de sus campos. A
-continuación se describe la arquitectura, las desiciones y justificaciones de diseño.
+continuación se describe la arquitectura, las decisiones y justificaciones de diseño.
 
 ### 1.1. Diseño dirigido por tablas de datos
 
@@ -144,7 +144,25 @@ codificación, que es el objetivo educativo de la herramienta.
   formato fijo, para permitir la verificación automatizada, independiente
   del resto de la salida explicativa.
 
----
+
+### 1.9. Validación automatizada separada del codificador
+
+Se decidió implementar la validación como un script independiente
+(`tests/validator.py`), separado por completo del codificador, en lugar de
+mezclarla con la herramienta principal. La decisión se toma pues el codificador no 
+debe validarse a sí mismo. El validador usa el toolchain oficial (`as` + `objdump`) como fuente de verdad externa e
+independiente, y compara contra ella. Además continuando con la separación de responsabilidades el codificador cumple el contrato
+de la especificación (una instrucción por ejecución, salida por
+`stdout`). El validador es una herramienta de desarrollo que invoca al
+codificador como caja negra, que de cierta manera replicaría la forma en que lo hará la verificación
+automática del profesor, sin acoplarse a su implementación interna.
+Y finalmente permite generar la evidencia automáticamente, en lugar de comparar 36 casos a
+mano, el script recorre todos, ejecuta ambas herramientas, y produce la
+tabla comparativa que sirve como evidencia de validación (sección 4).
+Esto hace la validación repetible, ante cualquier cambio en el
+codificador, se re-ejecuta y se confirma que los 36 casos siguen
+coincidiendo.
+
 
 ## 2. Fuentes consultadas para los campos de codificación
 
@@ -184,19 +202,19 @@ Se presentan los ejemplos de salida usando el encoder desarrollado para este pro
 
 ### Formato R — `./run.sh "add x5, x6, x7"`
 
-![Diagrama del formato R](documentation/img/add_expl.png)
+![Diagrama del formato R](../documentation/img/add_expl.png)
 
 ### Formato I — `./run.sh "addi x10, x1, -12"`
 
-![Diagrama del formato I](documentation/img/addi_expl.png)
+![Diagrama del formato I](../documentation/img/addi_expl.png)
 
 ### Formato S — `./run.sh "sw x8, -4(x2)"`
 
-![Diagrama del formato S](documentation/img/sw_expl.png)
+![Diagrama del formato S](../documentation/img/sw_expl.png)
 
 ### Formato B — `./run.sh "beq x1, x2, 8"`
 
-![Diagrama del formato S](documentation/img/beq_expl.png)
+![Diagrama del formato B](../documentation/img/beq_expl.png)
 
 ---
 
@@ -224,7 +242,7 @@ además de registros intermedios.
 Resultado de la ejecución:
 
 
-![Tabla de casos validados](documentation/img/table_cases.png)
+![Tabla de casos validados](../documentation/img/table_cases.png)
 
 ---
 
